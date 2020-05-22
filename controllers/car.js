@@ -86,7 +86,7 @@ exports.read = (req, res) => {
 
 exports.photo = (req, res, next) => {
     if (req.car.photo.data) {
-        res.set(("Content-Type", req.car.contentType));
+        res.set(("Content-Type", req.car.photo.contentType));
         return res.send(req.car.photo.data);
     }
     next();
