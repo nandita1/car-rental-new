@@ -1,5 +1,6 @@
 const formidable = require("formidable");
 const Car = require("../models/car");
+const fs = require("fs")
 const { errorHandler } = require("../helpers/dbErrorHandler");
 
 exports.carById = (req, res, next, id) => {
@@ -15,8 +16,8 @@ exports.carById = (req, res, next, id) => {
 };
 exports.create = (req, res) => {
     let form = new formidable.IncomingForm();
-    //form.keepExtensions = true;
-    form.parse(req, (err, fields) => {
+    form.keepExtensions = true;
+    form.parse(req, (err, fields, files) => {
         if (err)
             return res.status(400).json({
                 error: "form could not be submitted",
@@ -29,6 +30,12 @@ exports.create = (req, res) => {
                 error: "All fields are required",
             });
         }
+
+        if (files.photo) {
+            car.photo.data = fs.readFileSync(files.photo.path);
+            car.photo.contentType = files.photo.type;
+        }
+
         car.save((err, result) => {
             if (err)
                 return res.status(400).json({
@@ -49,7 +56,7 @@ exports.getAvailableCars = (req, res) => {
         res.json(result)
     })*/
     console.log(newDate)
-    Car.find({}).populate({path: "bookings", match: {issueDate: {$lte: newDate}, returnDate: {$gte: newDate}}}).exec((err, result) => {
+    Car.find({}).select("-photo").populate({path: "bookings", match: {issueDate: {$lte: newDate}, returnDate: {$gte: newDate}}}).exec((err, result) => {
         if (err)
                 return res.status(400).json({
                     error: errorHandler(err),
@@ -61,6 +68,29 @@ exports.getAvailableCars = (req, res) => {
         return res.json(final);
     })
 }
+
+exports.list = (req, res) => {
+    Car.find({}).select("-photo").populate("bookings").exec((err, result)=>{
+        if (err)
+                return res.status(400).json({
+                    error: errorHandler(err),
+                });
+        return res.json(result)
+    })
+}
+
+exports.read = (req, res) => {
+    req.car.photo = undefined;
+    return res.json(req.car);
+};
+
+exports.photo = (req, res, next) => {
+    if (req.car.photo.data) {
+        res.set(("Content-Type", req.post.contentType));
+        return res.send(req.car.photo.data);
+    }
+    next();
+};
 
 exports.filterCars = (req, res) => {
     let findArgs = {}

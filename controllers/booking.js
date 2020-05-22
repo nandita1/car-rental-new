@@ -33,7 +33,6 @@ exports.create = (req, res) => {
 
         let booking = new Booking({
             customer: {
-                id: req.profile._id,
                 name: name,
                 phone: phone
             },
@@ -76,7 +75,7 @@ exports.returnCar = (req, res) => {
                 return res.status(400).json({
                         error: errorHandler(err),
                 });
-                return res.json(result);
+                return res.json({message:"Return successful"});
             })
         
     })

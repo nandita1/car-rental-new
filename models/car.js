@@ -15,17 +15,24 @@ const carSchema = new mongoose.Schema(
       required: true,
       maxlength: 32,
     },
+    color:{
+      type: String,
+      trim: true,
+      required: true,
+    },
     rent: {
         type: Number,
         trim: true,
-        required: true,
-        maxlength: 32,
+        required: true
     },
     seatingCapacity: {
         type: Number,
         trim: true,
         required: true,
-        maxlength: 32,
+    },
+    photo: {
+      data: Buffer,
+      contentType: String,
     },
     //current bookings
     bookings: [{

@@ -4,10 +4,6 @@ const { ObjectId } = mongoose.Schema;
 const bookingSchema = new mongoose.Schema(
     {
         customer: {
-            id:{
-                type: ObjectId,
-                ref: "User"
-            },
             name: String,
             phone: Number
         },
