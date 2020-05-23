@@ -4,7 +4,7 @@ const fs = require("fs")
 const { errorHandler } = require("../helpers/dbErrorHandler");
 
 exports.carById = (req, res, next, id) => {
-    Car.findById(id).populate("bookings", "_id issueDate returnDate").exec((err, car) => {
+    Car.findById(id).populate("bookings").exec((err, car) => {
         if (err || !car) {
             return res.status(400).json({
                 error: "car not found",
